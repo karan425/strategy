@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Analysis Tool - Professional Edition</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --light-bg: #ecf0f1;
+            --dark-bg: #1a1a2e;
+            --card-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem 0;
+            transition: var(--transition);
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+            animation: slideDown 0.6s ease-out;
+        }
+
+        body.dark-mode .header {
+            background: rgba(26, 26, 46, 0.95);
+            color: #fff;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: var(--transition);
+        }
+
+        body.dark-mode .theme-toggle {
+            background: rgba(26, 26, 46, 0.9);
+            color: #fff;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(180deg) scale(1.1);
+        }
+
+        .analysis-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        body.dark-mode .analysis-card {
+            background: rgba(26, 26, 46, 0.95);
+            color: #fff;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .analysis-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .step-item {
+            background: #f8f9fa;
+            border-left: 4px solid var(--secondary-color);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 10px;
+            transition: var(--transition);
+            opacity: 0.6;
+        }
+
+        body.dark-mode .step-item {
+            background: #16213e;
+            border-left-color: var(--secondary-color);
+        }
+
+        body.dark-mode .step-item .bg-light {
+            background: #1a1a2e !important;
+        }
+
+        .step-item.active {
+            opacity: 1;
+            border-left-color: var(--success-color);
+            background: linear-gradient(to right, rgba(39, 174, 96, 0.1), transparent);
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.2);
+        }
+
+        .step-item.completed {
+            opacity: 1;
+            border-left-color: var(--success-color);
+            background: rgba(39, 174, 96, 0.05);
+        }
+
+        .step-item.invalid {
+            border-left-color: var(--danger-color);
+            background: rgba(231, 76, 60, 0.05);
+        }
+
+        .form-check-input:checked {
+            background-color: var(--success-color);
+            border-color: var(--success-color);
+        }
+
+        .btn-custom {
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: var(--transition);
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-custom:before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-custom:hover:before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+            color: white;
+        }
+
+        .btn-success-custom {
+            background: linear-gradient(135deg, var(--success-color), #229954);
+            color: white;
+        }
+
+        .btn-danger-custom {
+            background: linear-gradient(135deg, var(--danger-color), #c0392b);
+            color: white;
+        }
+
+        .progress-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .progress {
+            height: 30px;
+            border-radius: 15px;
+            overflow: visible;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, var(--success-color), #2ecc71);
+            border-radius: 15px;
+            transition: width 0.6s ease;
+            position: relative;
+            overflow: visible;
+        }
+
+        .progress-label {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .badge-custom {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, var(--success-color), #229954);
+            color: white;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(39, 174, 96, 0.3);
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .nav-tabs .nav-link {
+            border-radius: 10px 10px 0 0;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .nav-tabs .nav-link.active {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        select.form-select, input.form-control {
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            padding: 0.75rem;
+            transition: var(--transition);
+        }
+
+        select.form-select:focus, input.form-control:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+
+        body.dark-mode select.form-select, 
+        body.dark-mode input.form-control {
+            background: #16213e;
+            color: #fff;
+            border-color: #2c3e50;
+        }
+
+        .info-tooltip {
+            cursor: help;
+            color: var(--secondary-color);
+            margin-left: 5px;
+        }
+
+        .modal-content {
+            border-radius: 20px;
+            border: none;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+            color: white;
+            border-radius: 20px 20px 0 0;
+        }
+
+        @media (max-width: 768px) {
+            .analysis-card {
+                padding: 1.5rem;
+            }
+            
+            .btn-custom {
+                padding: 0.6rem 1.5rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <div class="main-container">
+        <div class="header text-center">
+            <h1 class="mb-3"><i class="fas fa-chart-line me-2"></i>Professional Trading Analysis Tool</h1>
+            <p class="lead mb-0">Systematic Trendline & Triangle Pattern Analysis</p>
+        </div>
+
+        <ul class="nav nav-tabs mb-4" id="analysisTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="trendline-tab" data-bs-toggle="tab" data-bs-target="#trendline" type="button">
+                    <i class="fas fa-chart-line me-2"></i>Trendline Breakdown Analysis
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="triangle-tab" data-bs-toggle="tab" data-bs-target="#triangle" type="button">
+                    <i class="fas fa-shapes me-2"></i>Ascending Triangle Analysis
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="analysisTabContent">
+            <!-- Trendline Breakdown Analysis -->
+            <div class="tab-pane fade show active" id="trendline" role="tabpanel">
+                <div class="analysis-card">
+                    <div class="progress-container">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="mb-0"><i class="fas fa-tasks me-2"></i>Analysis Progress</h5>
+                            <span class="badge bg-primary badge-custom" id="trendlineProgressBadge">0% Complete</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" id="trendlineProgress" style="width: 0%">
+                                <span class="progress-label">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form id="trendlineForm">
+                        <div class="step-item active" data-step="1">
+                            <h5><span class="status-indicator bg-primary"></span>Step 1: Check Market Trend</h5>
+                            <p class="text-muted mb-3">Identify the current market direction</p>
+                            <select class="form-select" id="marketTrend" required>
+                                <option value="">Select Market Trend...</option>
+                                <option value="uptrend">Uptrend</option>
+                                <option value="downtrend">Downtrend</option>
+                                <option value="sideways">Sideways</option>
+                            </select>
+                        </div>
+
+                        <div class="step-item" data-step="2">
+                            <h5><span class="status-indicator bg-secondary"></span>Step 2: Draw Ascending Trendline</h5>
+                            <p class="text-muted mb-3">Connect higher lows with an ascending trendline</p>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="trendlineDrawn">
+                                <label class="form-check-label" for="trendlineDrawn">
+                                    Trendline drawn successfully
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="step-item" data-step="3">
+                            <h5><span class="status-indicator bg-secondary"></span>Step 3: Validate with Lower Timeframe</h5>
+                            <p class="text-muted mb-3">Confirm structure on 3 or 5 minute timeframe</p>
+                            <select class="form-select mb-2" id="timeframe">
+                                <option value="">Select Timeframe...</option>
+                                <option value="3min">3 Minutes</option>
+                                <option value="5min">5 Minutes</option>
+                            </select>
+                        </div>
+
+                        <div class="step-item" data-step="4">
+                            <h5><span class="status-indicator bg-secondary"></span>Step 4: Confirm Touch Points</h5>
+                            <p class="text-muted mb-3">Minimum 2 touch points required for valid trendline</p>
+                            <select class="form-select" id="touchPoints">
+                                <option value="">Select Touch Points...</option>
+                                <option value="less">Less than 2</option>
+                                <option value="2">Exactly 2</option>
+                                <option value="more">More than 2</option>
+                            </select>
+                        </div>
+
+                        <div class="step-item" data-step="5">
+                            <h5><span class="status-indicator bg-secondary"></span>Step 5: Pre-Breakdown Structure</h5>
+                            <p class="text-muted mb-3">Check for pattern: HH → HL → LH → LL (Weakness Indicator)</p>
+                            
+                            <div class="mb-3 p-3 bg-light rounded border border-warning">
+                                <h6 class="mb-3 text-warning"><i class="fas fa-chart-line me-2"></i>Reference Pattern: HH → HL → LH → LL Structure</h6>
+                                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8IS0tIEJhY2tncm91bmQgLS0+CiAgPHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iI2Y4ZjlmYSIvPgogIAogIDwhLS0gQXNjZW5kaW5nIFRyZW5kbGluZSAtLT4KICA8bGluZSB4MT0iNTAiIHkxPSIyNTAiIHgyPSI0NTAiIHkyPSIxODAiIHN0cm9rZT0iIzI3YWU2MCIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtZGFzaGFycmF5PSI1LDUiLz4KICAKICA8IS0tIExIIC0gTG93ZXIgSGlnaCAtLT4KICA8cG9seWxpbmUgcG9pbnRzPSI1MCwyNTAgOTAsMTgwIDEzMCwyMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzJjM2U1MCIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSIyNTAiIHI9IjUiIGZpbGw9IiMyYzNlNTAiLz4KICA8dGV4dCB4PSIzNSIgeT0iMjcwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiMyYzNlNTAiPkw8L3RleHQ+CiAgPGNpcmNsZSBjeD0iOTAiIGN5PSIxODAiIHI9IjUiIGZpbGw9IiMyYzNlNTAiLz4KICA8dGV4dCB4PSI3NSIgeT0iMTcwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiMyYzNlNTAiPkxIPC90ZXh0PgogIAogIDwhLS0gSEggLSBIaWdoZXIgSGlnaCAtLT4KICA8cG9seWxpbmUgcG9pbnRzPSIxMzAsMjEwIDE3MCw4MCAxOTUsMTIwIiBmaWxsPSJub25lIiBzdHJva2U9IiMyYzNlNTAiIHN0cm9rZS13aWR0aD0iMiIvPgogIDxjaXJjbGUgY3g9IjE3MCIgY3k9IjgwIiByPSI1IiBmaWxsPSIjMmMzZTUwIi8+CiAgPHRleHQgeD0iMTU1IiB5PSI3MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjMmMzZTUwIj5ISDwvdGV4dD4KICAKICA8IS0tIExIIC0gTG93ZXIgSGlnaCAtLT4KICA8cG9seWxpbmUgcG9pbnRzPSIxOTUsMTIwIDIzNSw2MCAxNTUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzJjM2U1MCIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPGNpcmNsZSBjeD0iMjM1IiBjeT0iNjAiIHI9IjUiIGZpbGw9IiMyYzNlNTAiLz4KICA8dGV4dCB4PSIyNDUiIHk9IjY1IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiMyYzNlNTAiPkxIPC90ZXh0PgogIAogIDwhLS0gSEwgLSBIaWdoZXIgTG93IC0tPgogIDxwb2x5bGluZSBwb2ludHM9IjI1NSwxNTUgMjg1LDEzMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMmMzZTUwIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8Y2lyY2xlIGN4PSIyNTUiIGN5PSIxNTUiIHI9IjUiIGZpbGw9IiMyYzNlNTAiLz4KICA8dGV4dCB4PSIyNDAiIHk9IjE3NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjMmMzZTUwIj5ITDwvdGV4dD4KICAKICA8IS0tIExIIC0gTG93ZXIgSGlnaCAtLT4KICA8cG9seWxpbmUgcG9pbnRzPSIyODUsMTMwIDMyMCwxMDAgMzQwLDEzNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMmMzZTUwIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8Y2lyY2xlIGN4PSIzMjAiIGN5PSIxMDAiIHI9IjUiIGZpbGw9IiMyYzNlNTAiLz4KICA8dGV4dCB4PSIzMjUiIHk9Ijk1IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiMyYzNlNTAiPkxIPC90ZXh0PgogIAogIDwhLS0gTEwgLSBMb3dlciBMb3cgKEJyZWFrZG93bikgLS0+CiAgPHBvbHlsaW5lIHBvaW50cz0iMzQwLDEzNSAzNzUsMTgwIiBmaWxsPSJub25lIiBzdHJva2U9IiNlNzRjM2MiIHN0cm9rZS13aWR0aD0iMyIvPgogIDxjaXJjbGUgY3g9IjM3NSIgY3k9IjE4MCIgcj0iNiIgZmlsbD0iI2U3NGMzYyIvPgogIDx0ZXh0IHg9IjM4MCIgeT0iMTk1IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjZTc0YzNjIj5MTDwvdGV4dD4KICAKICA8IS0tIEJyZWFrZG93biBBcnJvdyAtLT4KICA8cG9seWxpbmUgcG9pbnRzPSI0MTAsMTYwIDQ0MCwyMjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2U3NGMzYyIgc3Ryb2tlLXdpZHRoPSIzIiBtYXJrZXItZW5kPSJ1cmwoI2Fycm93KSIvPgogIDxkZWZzPgogICAgPG1hcmtlciBpZD0iYXJyb3ciIG1hcmtlcldpZHRoPSIxMCIgbWFya2VySGVpZ2h0PSIxMCIgcmVmWD0iNSIgcmVmWT0iMyIgb3JpZW50PSJhdXRvIiBtYXJrZXJVbml0cz0ic3Ryb2tlV2lkdGgiPgogICAgICA8cGF0aCBkPSJNMCwwIEwwLDYgTDksMyB6IiBmaWxsPSIjZTc0YzNjIi8+CiAgICA8L21hcmtlcj4KICA8L2RlZnM+CiAgCiAgPCEtLSBMYWJlbHMgLS0+CiAgPHRleHQgeD0iMTAiIHk9IjI1IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjMmMzZTUwIj5UcmVuZGxpbmUgQnJlYWtkb3duIFBhdHRlcm46IEhIIOKGkiBITCDihpIgTEgg4oaSIExMPC90ZXh0PgogIDx0ZXh0IHg9IjEwIiB5PSI0NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjNjY2Ij5XZWFrbmVzcyBDb25maXJtZWQgd2hlbiBwcmljZSBicmVha3MgYmVsb3cgdHJlbmRsaW5lPC90ZXh0Pgo8L3N2Zz4=" class="img-fluid rounded" alt="Trendline Breakdown Pattern">
+                                <div class="alert alert-info mt-3 mb-0">
+                                    <strong><i class="fas fa-lightbulb me-2"></i>Pattern Explanation:</strong>
+                                    <ul class="mb-0 mt-2">
+                                        <li><strong>HH (Higher High):</strong> Price makes a new peak above previous high</li>
+                                        <li><strong>HL (Higher Low):</strong> Support holds above previous low</li>
+                                        <li><strong>LH (Lower High):</strong> Price fails to reach previous high - first weakness sign</li>
+                                        <li><strong>LL (Lower Low):</strong> Price breaks below previous low - breakdown confirmed</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <select class="form-select" id="structurePattern">
+                                <option value="">Select Pattern...</option>
+                                <option value="yes">Yes - HH → HL → LH → LL confirmed</option>
+                                <option value="no">No - Pattern not found</option>
+                            </select>
+                        </div>
+
+                        <div class="step-item" data-step="6">
+                            <h5><span class="status-indicator bg-secondary"></span>Step 6: RSI Rejection Zone</h5>
+                            <p class="text-muted mb-3">Breakdown candle RSI should be between 40-50</p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label">RSI Value</label>
+                                    <input type="number" class="form-control" id="rsiValue" min="0" max="100" placeholder="Enter RSI value">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Valid Range Check</label>
+                                    <select class="form-select" id="rsiRange">
+                                        <option value="">Check RSI Range...</option>
+                                        <option value="yes">Yes - Between 40-50</option>
+                                        <option value="no">No - Outside range</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="step-item" data-step="7">
+                            <h5><span class="status-indicator bg-secondary"></span>Step 7: Volume Confirmation (Optional)</h5>
+                            <p class="text-muted mb-3">Check for volume spike on breakdown</p>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="volumeSpike">
+                                <label class="form-check-label" for="volumeSpike">
+                                    Volume spike confirmed
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button type="button" class="btn btn-custom btn-success-custom me-2" id="completeTrendlineAnalysis">
+                                <i class="fas fa-check-circle me-2"></i>Complete Analysis
+                            </button>
+                            <button type="button" class="btn btn-custom btn-danger-custom" id="resetTrendline">
+                                <i class="fas fa-redo me-2"></i>Reset Analysis
+                            </button>
+                        </div>
+                    </form>
+
+                    <div id="trendlineResult" class="mt-4" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- Ascending Triangle Analysis -->
+            <div class="tab-pane fade" id="triangle" role="tabpanel">
+                <div class="analysis-card">
+                    <div class="progress-container">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="mb-0"><i class="fas fa-tasks me-2"></i>Analysis Progress</h5>
+                            <span class="badge bg-primary badge-custom" id="triangleProgressBadge">0% Complete</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" id="triangleProgress" style="width: 0%">
+                                <span class="progress-label">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form id="triangleForm">
+                        <div class="step-item active" data-step="1">
+                            <h5><span class="status-indicator bg-primary"></span>Step 1: Check Flat Top Resistance</h5>
+                            <p class="text-muted mb-3">Identify confirmed resistance level at the top</p>
+                            
+                            <div class="mb-3 p-3 bg-light rounded">
+                                <h6 class="mb-2"><i class="fas fa-info-circle me-2"></i>Reference Pattern: Ascending Triangle Structure</h6>
+                                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8IS0tIEJhY2tncm91bmQgLS0+CiAgPHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iI2Y4ZjlmYSIvPgogIAogIDwhLS0gRmxhdCBUb3AgUmVzaXN0YW5jZSAtLT4KICA8bGluZSB4MT0iNTAiIHkxPSI4MCIgeDI9IjQ1MCIgeTI9IjgwIiBzdHJva2U9IiNlNzRjM2MiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWRhc2hhcnJheT0iNSw1Ii8+CiAgPHRleHQgeD0iNDYwIiB5PSI4NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2U3NGMzYyI+UmVzaXN0YW5jZTwvdGV4dD4KICAKICA8IS0tIEhpZ2hlciBMb3dzIChBc2NlbmRpbmcgU3VwcG9ydCkgLS0+CiAgPGxpbmUgeDE9IjUwIiB5MT0iMjQwIiB4Mj0iMzUwIiB5Mj0iMTAwIiBzdHJva2U9IiMyN2FlNjAiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWRhc2hhcnJheT0iNSw1Ii8+CiAgPHRleHQgeD0iMzYwIiB5PSIxMDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiMyN2FlNjAiPkhpZ2hlciBMb3dzPC90ZXh0PgogIAogIDwhLS0gUHJpY2UgQWN0aW9uIGluc2lkZSBUcmlhbmdsZSAtLT4KICA8cG9seWxpbmUgcG9pbnRzPSI1MCwyNDAgODAsODAgMTIwLDIwMCAxNjAsODAgMjAwLDE3MCAyNDAsMTAwIDI4MCwxMzAgMzIwLDEwMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMmMzZTUwIiBzdHJva2Utd2lkdGg9IjIiLz4KICAKICA8IS0tIEhpZ2hlciBMb3cgUG9pbnRzIC0tPgogIDxjaXJjbGUgY3g9IjUwIiBjeT0iMjQwIiByPSI1IiBmaWxsPSIjMjdhZTYwIi8+CiAgPGNpcmNsZSBjeD0iMTIwIiBjeT0iMjAwIiByPSI1IiBmaWxsPSIjMjdhZTYwIi8+CiAgPGNpcmNsZSBjeD0iMjAwIiBjeT0iMTcwIiByPSI1IiBmaWxsPSIjMjdhZTYwIi8+CiAgPGNpcmNsZSBjeD0iMjgwIiBjeT0iMTMwIiByPSI1IiBmaWxsPSIjMjdhZTYwIi8+CiAgCiAgPCEtLSBSZXNpc3RhbmNlIFRvdWNoIFBvaW50cyAtLT4KICA8Y2lyY2xlIGN4PSI4MCIgY3k9IjgwIiByPSI1IiBmaWxsPSIjZTc0YzNjIi8+CiAgPGNpcmNsZSBjeD0iMTYwIiBjeT0iODAiIHI9IjUiIGZpbGw9IiNlNzRjM2MiLz4KICA8Y2lyY2xlIGN4PSIyNDAiIGN5PSI4MCIgcj0iNSIgZmlsbD0iI2U3NGMzYyIvPgogIDxjaXJjbGUgY3g9IjMyMCIgY3k9IjgwIiByPSI1IiBmaWxsPSIjZTc0YzNjIi8+CiAgCiAgPCEtLSBCcmVha291dCBDYW5kbGUgLS0+CiAgPHBvbHlsaW5lIHBvaW50cz0iMzIwLDEwMCAzNjAsMjAgNDAwLDQwIiBmaWxsPSJub25lIiBzdHJva2U9IiMyN2FlNjAiIHN0cm9rZS13aWR0aD0iNCIvPgogIDxjaXJjbGUgY3g9IjM2MCIgY3k9IjIwIiByPSI4IiBmaWxsPSIjMjdhZTYwIi8+CiAgPHRleHQgeD0iMzc1IiB5PSIyNSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iIzI3YWU2MCI+QnJlYWtvdXQhPC90ZXh0PgogIAogIDwhLS0gQnJlYWtvdXQgQXJyb3cgLS0+CiAgPHBvbHlsaW5lIHBvaW50cz0iNDIwLDQwIDQ1MCwyMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMjdhZTYwIiBzdHJva2Utd2lkdGg9IjMiIG1hcmtlci1lbmQ9InVybCgjYXJyb3dVcCkiLz4KICA8ZGVmcz4KICAgIDxtYXJrZXIgaWQ9ImFycm93VXAiIG1hcmtlcldpZHRoPSIxMCIgbWFya2VySGVpZ2h0PSIxMCIgcmVmWD0iNSIgcmVmWT0iMyIgb3JpZW50PSJhdXRvIiBtYXJrZXJVbml0cz0ic3Ryb2tlV2lkdGgiPgogICAgICA8cGF0aCBkPSJNMCwwIEwwLDYgTDksMyB6IiBmaWxsPSIjMjdhZTYwIi8+CiAgICA8L21hcmtlcj4KICA8L2RlZnM+CiAgCiAgPCEtLSBMYWJlbHMgLS0+CiAgPHRleHQgeD0iMTAiIHk9IjI1IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjMmMzZTUwIj5Bc2NlbmRpbmcgVHJpYW5nbGUgQnJlYWtvdXQgUGF0dGVybjwvdGV4dD4KICA8dGV4dCB4PSIxMCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzY2NiI+RmxhdCBUb3AgKyBIaWdoZXIgTG93cyArIEJyZWFrb3V0IENvbmZpcm1hdGlvbjwvdGV4dD4KPC9zdmc+" class="img-fluid rounded" alt="Ascending Triangle Pattern">
+                            </div>
+                            
+                            <select class="form-select" id="flatTop">
+                                <option value="">Check Flat Top...</option>
+                                <option value="yes">Yes - Confirmed Resistance</option>
+                                <option value="no">No - Invalid Structure</option>
+                            </select>
+                        </div>
+
+                        <div class="step-item" data-step="2">
+                            <h5><span class="status-indicator bg-secondary"></span>Step 2: Check Higher Lows</h5>
+                            <p class="text-muted mb-3">Verify buying pressure with ascending support</p>
+                            <select class="form-select" id="higherLows">
+                                <option value="">Check Higher Lows...</option>
+                                <option value="yes">Yes - Valid Triangle Structure</option>
+                                <option value="no">No - Invalid Structure</option>
+                            </select>
+                        </div>
+
+                        <div class="step-item" data-step="3">
+                            <h5><span class="status-indicator bg-secondary"></span>Step 3: Wait for Breakout Candle</h5>
+                            <p class="text-muted mb-3">Confirm breakout candle closes above resistance</p>
+                            <select class="form-select" id="breakoutCandle">
+                                <option value="">Breakout Status...</option>
+                                <option value="yes">Yes - Closed Above Resistance</option>
+                                <option value="no">No - False Breakout</option>
+                            </select>
+                        </div>
+
+                        <div class="step-item" data-step="4">
+                            <h5><span class="status-indicator bg-secondary"></span>Step 4: Check EMA Position</h5>
+                            <p class="text-muted mb-3">Confirm bullish alignment: EMA 9 > EMA 16</p>
+                            <select class="form-select" id="emaPosition">
+                                <option value="">Check EMA Position...</option>
+                                <option value="yes">Yes - EMA 9 > EMA 16 (Bullish)</option>
+                                <option value="no">No - Avoid Trade</option>
+                            </select>
+                        </div>
+
+                        <div class="step-item" data-step="5">
+                            <h5><span class="status-indicator bg-secondary"></span>Step 5: Pullback Confirmation (Optional)</h5>
+                            <p class="text-muted mb-3">Wait for 2-3 candles pullback for better entry</p>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="pullbackConfirmed">
+                                <label class="form-check-label" for="pullbackConfirmed">
+                                    Pullback confirmed (2-3 candles)
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="step-item" data-step="6">
+                            <h5><span class="status-indicator bg-secondary"></span>Step 6: Entry & Risk Management</h5>
+                            <p class="text-muted mb-3">Set entry, stop loss, and target levels</p>
+                            <div class="row">
+                                <div class="col-md-4 mb-2">
+                                    <label class="form-label">Entry Price</label>
+                                    <input type="number" class="form-control" id="entryPrice" placeholder="Entry price" step="0.01">
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label class="form-label">Stop Loss</label>
+                                    <input type="number" class="form-control" id="stopLoss" placeholder="Stop loss" step="0.01">
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label class="form-label">Target (1:3 R:R)</label>
+                                    <input type="number" class="form-control" id="targetPrice" placeholder="Auto-calculated" step="0.01" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button type="button" class="btn btn-custom btn-success-custom me-2" id="completeTriangleAnalysis">
+                                <i class="fas fa-check-circle me-2"></i>Execute Trade
+                            </button>
+                            <button type="button" class="btn btn-custom btn-danger-custom" id="resetTriangle">
+                                <i class="fas fa-redo me-2"></i>Reset Analysis
+                            </button>
+                        </div>
+                    </form>
+
+                    <div id="triangleResult" class="mt-4" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-check-circle me-2"></i>Analysis Complete</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center py-4">
+                    <i class="fas fa-trophy fa-4x text-warning mb-3"></i>
+                    <h4 id="modalMessage"></h4>
+                    <p class="text-muted" id="modalDetails"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-custom btn-primary-custom" data-bs-dismiss="modal">Continue</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="./js/app.js"></script>
+</body>
+</html>
