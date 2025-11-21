@@ -70,9 +70,114 @@
         .content-wrapper {
             position: relative;
             z-index: 1;
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
         }
+
+        /* Advertisement Sliders */
+        .ad-container {
+            position: absolute;
+            top: 50px;
+            width: 380px;
+            height: 200px;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: fadeIn 1s ease-out 0.5s both;
+        }
+
+        .ad-container.left {
+            left: 20px;
+        }
+
+        .ad-container.right {
+            right: 20px;
+        }
+
+        .ad-slider {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .ad-slide {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .ad-slide.active {
+            opacity: 1;
+        }
+
+        .ad-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .ad-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .ad-description {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Loading state */
+        .ad-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background: #f0f0f0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Ad Navigation Dots */
+        .ad-dots {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .ad-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .ad-dot.active {
+            background: #667eea;
+            width: 24px;
+            border-radius: 4px;
+        }
+
+
 
         /* Title */
         .title {
@@ -100,7 +205,7 @@
 
         /* Top Info Section */
         .top-info-section {
-            display: flex;
+            display: grid;
             justify-content: center;
             align-items: center;
             gap: 20px;
@@ -119,7 +224,6 @@
             backdrop-filter: blur(10px);
             box-shadow: 0 8px 32px rgba(0,0,0,0.1);
             min-width: 180px;
-            margin-bottom: 20px;
             justify-content: center;
         }
 
@@ -393,6 +497,54 @@
         }
 
         /* Mobile Responsive */
+        @media (max-width: 1400px) {
+            .ad-container {
+                width: 320px;
+                height: 180px;
+            }
+
+            .ad-container.left {
+                left: 10px;
+            }
+
+            .ad-container.right {
+                right: 10px;
+            }
+
+            .ad-slide img {
+                max-height: 120px;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .ad-container {
+                position: relative;
+                top: 0;
+                left: 0 !important;
+                right: 0 !important;
+                width: 100%;
+                max-width: 500px;
+                margin: 0 auto 20px;
+            }
+
+            .ad-container.left {
+                order: 1;
+            }
+
+            .ad-container.right {
+                order: 2;
+            }
+
+            .content-wrapper {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .main-content {
+                order: 3;
+            }
+        }
+
         @media (max-width: 1024px) {
             .main-container {
                 flex-direction: column;
@@ -471,6 +623,27 @@
             .progress-container {
                 margin-bottom: 25px;
             }
+
+            .ad-container {
+                height: 160px;
+            }
+
+            .ad-slide img {
+                max-height: 100px;
+            }
+
+            .chart-placeholder {
+                height: 100px;
+                font-size: 12px;
+            }
+
+            .ad-title {
+                font-size: 14px;
+            }
+
+            .ad-description {
+                font-size: 11px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -507,6 +680,14 @@
                 font-size: 15px;
                 padding: 10px 18px;
             }
+
+            .ad-container {
+                height: 140px;
+            }
+
+            .ad-slide img {
+                max-height: 80px;
+            }
         }
     </style>
 </head>
@@ -516,20 +697,39 @@
     <div class="particles" id="particles"></div>
 
     <div class="content-wrapper">
+        <!-- Left Advertisement Slider -->
+        <div class="ad-container left">
+            <div class="ad-slider" id="leftSlider">
+                <div class="ad-loading">Loading advertisements...</div>
+            </div>
+            <div class="ad-dots" id="leftDots"></div>
+        </div>
+
+        <!-- Right Advertisement Slider -->
+        <div class="ad-container right">
+            <div class="ad-slider" id="rightSlider">
+                <div class="ad-loading">Loading advertisements...</div>
+            </div>
+            <div class="ad-dots" id="rightDots"></div>
+        </div>
+
+        <div class="main-content">
         <div class="title">Indian Market Session</div>
 
-        <!-- Market Status Badge -->
-        <div class="status-badge">
-            <div class="status-dot" id="statusDot"></div>
-            <div class="status-text" id="statusText">Loading...</div>
+        <!-- Top Info Section - Aligned -->
+        <div class="top-info-section">
+            <!-- Market Status Badge -->
+            <div class="status-badge">
+                <div class="status-dot" id="statusDot"></div>
+                <div class="status-text" id="statusText">Loading...</div>
+            </div>
+            <!-- Current Time Display -->
+            <div class="current-time-display">
+                <div class="time" id="currentTime">--:--:--</div>
+                <div class="label">CURRENT TIME</div>
+            </div>
         </div>
-        <br>
 
-        <!-- Current Time Display -->
-        <div class="current-time-display">
-            <div class="time" id="currentTime">--:--:--</div>
-            <div class="label">CURRENT TIME</div>
-        </div><br><br>
         <div class="main-container">
             <!-- First Half Section -->
             <div class="time-section">
@@ -576,9 +776,182 @@
                 </div>
             </div>
         </div>
+        </div>
     </div>
 
 <script>
+// Configuration - Add your image filenames here
+const leftBannerImages = [
+    'left_banner/image1.PNG',
+    'left_banner/image2.PNG',
+    'left_banner/image3.PNG',
+    'left_banner/image4.PNG',
+    'left_banner/image5.PNG',
+    'left_banner/image6.PNG',
+    'left_banner/image7.PNG',
+    // 'left_banner/image3.PNG',
+    // 'left_banner/image4.PNG',
+    // 'left_banner/image5.PNG'
+];
+
+const rightBannerImages = [
+    'right_banner/image1.PNG',
+    'right_banner/image2.PNG',
+    'right_banner/image3.PNG',
+    'right_banner/image4.PNG',
+    'right_banner/image5.PNG'
+];
+
+// Advertisement Slider functionality
+let leftSliderIndex = 0;
+let rightSliderIndex = 0;
+let leftSliderInterval;
+let rightSliderInterval;
+let leftImages = [];
+let rightImages = [];
+
+// Load images and initialize sliders
+function initializeSliders() {
+    // Filter out images that don't exist
+    loadImages('left', leftBannerImages);
+    loadImages('right', rightBannerImages);
+}
+
+function loadImages(slider, imageList) {
+    const promises = imageList.map(src => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve(src);
+            img.onerror = () => reject(src);
+            img.src = src;
+        });
+    });
+
+    Promise.allSettled(promises).then(results => {
+        const validImages = results
+            .filter(result => result.status === 'fulfilled')
+            .map(result => result.value);
+
+        if (slider === 'left') {
+            leftImages = validImages;
+            if (leftImages.length > 0) {
+                buildSlider('left', leftImages);
+                startSliderInterval('left');
+            } else {
+                showNoImages('left');
+            }
+        } else {
+            rightImages = validImages;
+            if (rightImages.length > 0) {
+                buildSlider('right', rightImages);
+                startSliderInterval('right');
+            } else {
+                showNoImages('right');
+            }
+        }
+    });
+}
+
+function showNoImages(slider) {
+    const sliderId = slider === 'left' ? 'leftSlider' : 'rightSlider';
+    const sliderElement = document.getElementById(sliderId);
+    sliderElement.innerHTML = '<div class="ad-loading">No images found in ' + slider + '_banner folder</div>';
+}
+
+function buildSlider(slider, images) {
+    const sliderId = slider === 'left' ? 'leftSlider' : 'rightSlider';
+    const dotsId = slider === 'left' ? 'leftDots' : 'rightDots';
+    
+    const sliderElement = document.getElementById(sliderId);
+    const dotsElement = document.getElementById(dotsId);
+    
+    // Clear loading message
+    sliderElement.innerHTML = '';
+    dotsElement.innerHTML = '';
+    
+    // Create slides
+    images.forEach((src, index) => {
+        const slide = document.createElement('div');
+        slide.className = 'ad-slide' + (index === 0 ? ' active' : '');
+        
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = 'Advertisement ' + (index + 1);
+        
+        slide.appendChild(img);
+        sliderElement.appendChild(slide);
+        
+        // Create dot
+        const dot = document.createElement('div');
+        dot.className = 'ad-dot' + (index === 0 ? ' active' : '');
+        dot.onclick = () => changeSlide(slider, index);
+        dotsElement.appendChild(dot);
+    });
+}
+
+function changeSlide(slider, index) {
+    if (slider === 'left') {
+        leftSliderIndex = index;
+        updateSlider('left');
+        resetSliderInterval('left');
+    } else {
+        rightSliderIndex = index;
+        updateSlider('right');
+        resetSliderInterval('right');
+    }
+}
+
+function updateSlider(slider) {
+    const sliderId = slider === 'left' ? 'leftSlider' : 'rightSlider';
+    const dotsId = slider === 'left' ? 'leftDots' : 'rightDots';
+    const currentIndex = slider === 'left' ? leftSliderIndex : rightSliderIndex;
+    
+    const slides = document.querySelectorAll(`#${sliderId} .ad-slide`);
+    const dots = document.querySelectorAll(`#${dotsId} .ad-dot`);
+    
+    slides.forEach((slide, index) => {
+        slide.classList.toggle('active', index === currentIndex);
+    });
+    
+    dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentIndex);
+    });
+}
+
+function nextSlide(slider) {
+    const imageCount = slider === 'left' ? leftImages.length : rightImages.length;
+    if (imageCount === 0) return;
+    
+    if (slider === 'left') {
+        leftSliderIndex = (leftSliderIndex + 1) % imageCount;
+        updateSlider('left');
+    } else {
+        rightSliderIndex = (rightSliderIndex + 1) % imageCount;
+        updateSlider('right');
+    }
+}
+
+function startSliderInterval(slider) {
+    if (slider === 'left') {
+        leftSliderInterval = setInterval(() => nextSlide('left'), 5000);
+    } else {
+        rightSliderInterval = setInterval(() => nextSlide('right'), 5000);
+    }
+}
+
+function resetSliderInterval(slider) {
+    if (slider === 'left') {
+        clearInterval(leftSliderInterval);
+        startSliderInterval('left');
+    } else {
+        clearInterval(rightSliderInterval);
+        startSliderInterval('right');
+    }
+}
+
+// Initialize sliders on page load
+initializeSliders();
+
 // Create floating particles
 function createParticles() {
     const particlesContainer = document.getElementById('particles');
@@ -716,4 +1089,3 @@ updateMarketSession();
 
 </body>
 </html>
-
