@@ -26,16 +26,17 @@
         .header {
             background: rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(10px);
-            padding: 10px 40px;
+            padding: 12px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            min-height: 60px;
         }
 
         .header-title {
             color: white;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 700;
             letter-spacing: -0.5px;
         }
@@ -44,14 +45,16 @@
             background: rgba(255, 255, 255, 0.2);
             color: white;
             border: 2px solid rgba(255, 255, 255, 0.3);
-            padding: 5px 19px;
-            border-radius: 25px;
-            font-size: 16px;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             text-decoration: none;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .back-button:hover {
@@ -66,15 +69,15 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            /*padding: 40px;*/
+            padding: 40px;
             position: relative;
         }
 
         .banner-display {
             position: relative;
             width: 100%;
-            max-width: 1200px;
-            height: 700px;
+            max-width: 1400px;
+            height: 500px;
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(15px);
             border-radius: 20px;
@@ -101,6 +104,128 @@
             width: 100%;
             height: 100%;
             object-fit: contain;
+            transition: transform 0.3s ease;
+            cursor: zoom-in;
+        }
+
+        .banner-slide img.zoomed {
+            cursor: zoom-out;
+        }
+
+        /* Zoom overlay */
+        .zoom-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 10000;
+            cursor: zoom-out;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .zoom-overlay.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: auto;
+        }
+
+        .zoom-content {
+            position: relative;
+            max-width: 95%;
+            max-height: 95%;
+            padding: 20px;
+        }
+
+        .zoom-content img {
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+            transform-origin: center center;
+            transition: transform 0.3s ease;
+            cursor: move;
+        }
+
+        .zoom-controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 12px 24px;
+            border-radius: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            z-index: 10001;
+        }
+
+        .zoom-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .zoom-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .zoom-close {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 30px;
+            z-index: 10001;
+        }
+
+        .zoom-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .zoom-info {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 10001;
         }
 
         /* Navigation Arrows */
@@ -142,51 +267,58 @@
         /* Bottom Controls */
         .controls-container {
             position: absolute;
-            bottom: 30px;
+            bottom: 25px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
+            width: 100%;
+            max-width: 90%;
         }
 
         .counter {
             background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
-            color: black;
-            padding: 12px 30px;
-            border-radius: 25px;
-            font-size: 16px;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 20px;
+            font-size: 15px;
             font-weight: 600;
             border: 2px solid rgba(255, 255, 255, 0.3);
         }
 
         .dots-container {
             display: flex;
-            gap: 12px;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 100%;
+            padding: 0 20px;
         }
 
         .dot {
-            width: 14px;
-            height: 14px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.3);
             cursor: pointer;
             transition: all 0.3s ease;
             border: 2px solid rgba(255, 255, 255, 0.5);
+            flex-shrink: 0;
         }
 
         .dot.active {
             background: white;
-            width: 40px;
-            border-radius: 7px;
+            width: 35px;
+            border-radius: 6px;
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
         }
 
         .dot:hover:not(.active) {
             background: rgba(255, 255, 255, 0.6);
-            transform: scale(1.2);
+            transform: scale(1.15);
         }
 
         /* Play/Pause Button */
@@ -231,9 +363,10 @@
         }
 
         /* Mobile Responsive */
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             .header {
-                padding: 15px 20px;
+                padding: 10px 20px;
+                min-height: 55px;
             }
 
             .header-title {
@@ -241,16 +374,77 @@
             }
 
             .back-button {
-                padding: 10px 20px;
-                font-size: 14px;
-            }
-
-            .viewer-container {
-                padding: 20px;
+                padding: 7px 18px;
+                font-size: 13px;
             }
 
             .banner-display {
-                height: 500px;
+                height: 450px;
+            }
+
+            .nav-arrow {
+                width: 60px;
+                height: 60px;
+                font-size: 35px;
+            }
+
+            .nav-arrow.prev {
+                left: 20px;
+            }
+
+            .nav-arrow.next {
+                right: 20px;
+            }
+
+            .play-pause-btn {
+                width: 55px;
+                height: 55px;
+                font-size: 22px;
+                top: 25px;
+                right: 25px;
+            }
+
+            .counter {
+                padding: 9px 22px;
+                font-size: 14px;
+            }
+
+            .dot {
+                width: 11px;
+                height: 11px;
+            }
+
+            .dot.active {
+                width: 32px;
+            }
+
+            .controls-container {
+                bottom: 20px;
+                gap: 12px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 10px 15px;
+                min-height: 50px;
+            }
+
+            .header-title {
+                font-size: 16px;
+            }
+
+            .back-button {
+                padding: 6px 15px;
+                font-size: 12px;
+            }
+
+            .viewer-container {
+                padding: 15px;
+            }
+
+            .banner-display {
+                height: 400px;
             }
 
             .nav-arrow {
@@ -260,24 +454,24 @@
             }
 
             .nav-arrow.prev {
-                left: 15px;
+                left: 10px;
             }
 
             .nav-arrow.next {
-                right: 15px;
+                right: 10px;
             }
 
             .play-pause-btn {
-                width: 50px;
-                height: 50px;
-                font-size: 20px;
-                top: 20px;
-                right: 20px;
+                width: 45px;
+                height: 45px;
+                font-size: 18px;
+                top: 15px;
+                right: 15px;
             }
 
             .counter {
-                padding: 8px 20px;
-                font-size: 14px;
+                padding: 8px 18px;
+                font-size: 13px;
             }
 
             .dot {
@@ -286,26 +480,179 @@
             }
 
             .dot.active {
-                width: 30px;
+                width: 28px;
             }
 
             .controls-container {
+                bottom: 18px;
+                gap: 12px;
+            }
+
+            .dots-container {
+                gap: 8px;
+                padding: 0 15px;
+            }
+        }
+
+            .zoom-controls {
                 bottom: 20px;
+                padding: 10px 20px;
+                gap: 12px;
+            }
+
+            .zoom-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 18px;
+            }
+
+            .zoom-close {
+                width: 45px;
+                height: 45px;
+                font-size: 26px;
+                top: 15px;
+                right: 15px;
+            }
+
+            .zoom-info {
+                font-size: 13px;
+                padding: 8px 16px;
+                top: 15px;
             }
         }
 
         @media (max-width: 480px) {
-            .banner-display {
-                height: 400px;
+            .header {
+                padding: 8px 12px;
+                min-height: 45px;
             }
 
             .header-title {
-                font-size: 16px;
+                font-size: 14px;
             }
 
             .back-button {
-                padding: 8px 16px;
+                padding: 5px 12px;
+                font-size: 11px;
+                gap: 3px;
+            }
+
+            .viewer-container {
+                padding: 10px;
+            }
+
+            .banner-display {
+                height: 320px;
+            }
+
+            .nav-arrow {
+                width: 40px;
+                height: 40px;
+                font-size: 24px;
+            }
+
+            .nav-arrow.prev {
+                left: 5px;
+            }
+
+            .nav-arrow.next {
+                right: 5px;
+            }
+
+            .play-pause-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+                top: 10px;
+                right: 10px;
+            }
+
+            .counter {
+                padding: 6px 15px;
+                font-size: 12px;
+            }
+
+            .dot {
+                width: 8px;
+                height: 8px;
+            }
+
+            .dot.active {
+                width: 24px;
+            }
+
+            .controls-container {
+                bottom: 15px;
+                gap: 10px;
+            }
+
+            .dots-container {
+                gap: 6px;
+                padding: 0 10px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .header {
+                padding: 8px 10px;
+                min-height: 40px;
+            }
+
+            .header-title {
                 font-size: 13px;
+            }
+
+            .back-button {
+                padding: 4px 10px;
+                font-size: 10px;
+            }
+
+            .banner-display {
+                height: 280px;
+            }
+
+            .counter {
+                padding: 5px 12px;
+                font-size: 11px;
+            }
+
+            .dot {
+                width: 7px;
+                height: 7px;
+            }
+
+            .dot.active {
+                width: 20px;
+            }
+
+            .dots-container {
+                gap: 5px;
+            }
+
+            .zoom-controls {
+                bottom: 15px;
+                padding: 8px 16px;
+                gap: 10px;
+            }
+
+            .zoom-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 16px;
+            }
+
+            .zoom-close {
+                width: 40px;
+                height: 40px;
+                font-size: 24px;
+                top: 10px;
+                right: 10px;
+            }
+
+            .zoom-info {
+                font-size: 12px;
+                padding: 6px 12px;
+                top: 10px;
             }
         }
     </style>
@@ -314,8 +661,8 @@
 
     <!-- Header -->
     <div class="header">
-        <div class="header-title"></div>
-        <a href="index.html" class="back-button">←</a>
+        <div class="header-title">Advertisement Viewer</div>
+        <a href="index.html" class="back-button">← Back to Market</a>
     </div>
 
     <!-- Main Viewer -->
@@ -342,6 +689,20 @@
         </div>
     </div>
 
+    <!-- Zoom Overlay -->
+    <div class="zoom-overlay" id="zoomOverlay">
+        <div class="zoom-close" onclick="closeZoom()">&times;</div>
+        <div class="zoom-info" id="zoomInfo">Zoom: 100%</div>
+        <div class="zoom-content" id="zoomContent">
+            <img id="zoomImage" src="" alt="Zoomed Banner">
+        </div>
+        <div class="zoom-controls">
+            <div class="zoom-btn" onclick="zoomIn()" title="Zoom In">+</div>
+            <div class="zoom-btn" onclick="resetZoom()" title="Reset Zoom">⟲</div>
+            <div class="zoom-btn" onclick="zoomOut()" title="Zoom Out">−</div>
+        </div>
+    </div>
+
     <script>
         // Get URL parameters to determine which banner to show
         const urlParams = new URLSearchParams(window.location.search);
@@ -350,7 +711,7 @@
 
         // Configuration - Same as main page
         const leftBannerImages = [
-            'left_banner/image1.png',
+             'left_banner/image1.png',
             'left_banner/image2.png',
             'left_banner/image3.png',
             'left_banner/image4.png',
@@ -377,6 +738,9 @@
         let currentIndex = 0;
         let autoSlideInterval;
         let isAutoSliding = true;
+        let zoomLevel = 1;
+        let isDragging = false;
+        let startX, startY, translateX = 0, translateY = 0;
 
         // Initialize
         function init() {
@@ -424,6 +788,7 @@
                 const img = document.createElement('img');
                 img.src = src;
                 img.alt = 'Banner ' + (index + 1);
+                img.onclick = () => openZoom(src);
                 
                 slide.appendChild(img);
                 display.appendChild(slide);
@@ -514,6 +879,23 @@
 
         // Keyboard navigation
         document.addEventListener('keydown', function(event) {
+            const zoomOverlay = document.getElementById('zoomOverlay');
+            
+            // If zoom is active, handle zoom controls
+            if (zoomOverlay.classList.contains('active')) {
+                if (event.key === 'Escape') {
+                    closeZoom();
+                } else if (event.key === '+' || event.key === '=') {
+                    zoomIn();
+                } else if (event.key === '-' || event.key === '_') {
+                    zoomOut();
+                } else if (event.key === '0') {
+                    resetZoom();
+                }
+                return;
+            }
+            
+            // Normal navigation
             if (event.key === 'ArrowRight') {
                 nextSlide();
             } else if (event.key === 'ArrowLeft') {
@@ -521,6 +903,160 @@
             } else if (event.key === ' ') {
                 event.preventDefault();
                 toggleAutoSlide();
+            }
+        });
+
+        // Zoom Functions
+        function openZoom(imageSrc) {
+            const zoomOverlay = document.getElementById('zoomOverlay');
+            const zoomImage = document.getElementById('zoomImage');
+            
+            zoomImage.src = imageSrc;
+            zoomOverlay.classList.add('active');
+            zoomLevel = 1;
+            translateX = 0;
+            translateY = 0;
+            updateZoomTransform();
+            
+            // Stop auto-slide when zooming
+            if (isAutoSliding) {
+                stopAutoSlide();
+            }
+            
+            // Prevent body scroll
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeZoom() {
+            const zoomOverlay = document.getElementById('zoomOverlay');
+            zoomOverlay.classList.remove('active');
+            zoomLevel = 1;
+            translateX = 0;
+            translateY = 0;
+            
+            // Resume auto-slide if it was on
+            if (isAutoSliding) {
+                startAutoSlide();
+            }
+            
+            // Restore body scroll
+            document.body.style.overflow = 'auto';
+        }
+
+        function zoomIn() {
+            zoomLevel = Math.min(zoomLevel + 0.25, 4);
+            updateZoomTransform();
+        }
+
+        function zoomOut() {
+            zoomLevel = Math.max(zoomLevel - 0.25, 0.5);
+            if (zoomLevel === 1) {
+                translateX = 0;
+                translateY = 0;
+            }
+            updateZoomTransform();
+        }
+
+        function resetZoom() {
+            zoomLevel = 1;
+            translateX = 0;
+            translateY = 0;
+            updateZoomTransform();
+        }
+
+        function updateZoomTransform() {
+            const zoomImage = document.getElementById('zoomImage');
+            const zoomInfo = document.getElementById('zoomInfo');
+            
+            zoomImage.style.transform = `scale(${zoomLevel}) translate(${translateX}px, ${translateY}px)`;
+            zoomInfo.textContent = `Zoom: ${Math.round(zoomLevel * 100)}%`;
+        }
+
+        // Mouse wheel zoom
+        document.getElementById('zoomOverlay').addEventListener('wheel', function(e) {
+            e.preventDefault();
+            if (e.deltaY < 0) {
+                zoomIn();
+            } else {
+                zoomOut();
+            }
+        });
+
+        // Drag to pan (when zoomed)
+        const zoomImage = document.getElementById('zoomImage');
+        
+        zoomImage.addEventListener('mousedown', function(e) {
+            if (zoomLevel > 1) {
+                isDragging = true;
+                startX = e.clientX - translateX;
+                startY = e.clientY - translateY;
+                zoomImage.style.cursor = 'grabbing';
+            }
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if (isDragging && zoomLevel > 1) {
+                translateX = e.clientX - startX;
+                translateY = e.clientY - startY;
+                updateZoomTransform();
+            }
+        });
+
+        document.addEventListener('mouseup', function() {
+            if (isDragging) {
+                isDragging = false;
+                zoomImage.style.cursor = 'move';
+            }
+        });
+
+        // Touch support for mobile zoom and pan
+        let touchStartDistance = 0;
+        let initialZoom = 1;
+
+        zoomImage.addEventListener('touchstart', function(e) {
+            if (e.touches.length === 2) {
+                // Pinch zoom
+                e.preventDefault();
+                touchStartDistance = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                initialZoom = zoomLevel;
+            } else if (e.touches.length === 1 && zoomLevel > 1) {
+                // Pan
+                isDragging = true;
+                startX = e.touches[0].clientX - translateX;
+                startY = e.touches[0].clientY - translateY;
+            }
+        });
+
+        zoomImage.addEventListener('touchmove', function(e) {
+            if (e.touches.length === 2) {
+                // Pinch zoom
+                e.preventDefault();
+                const currentDistance = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                zoomLevel = Math.max(0.5, Math.min(4, initialZoom * (currentDistance / touchStartDistance)));
+                updateZoomTransform();
+            } else if (e.touches.length === 1 && isDragging && zoomLevel > 1) {
+                // Pan
+                e.preventDefault();
+                translateX = e.touches[0].clientX - startX;
+                translateY = e.touches[0].clientY - startY;
+                updateZoomTransform();
+            }
+        });
+
+        zoomImage.addEventListener('touchend', function() {
+            isDragging = false;
+        });
+
+        // Close zoom on background click
+        document.getElementById('zoomOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeZoom();
             }
         });
 
