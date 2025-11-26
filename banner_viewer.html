@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banner Viewer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-title {
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .back-button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Main Content */
+        .viewer-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            position: relative;
+        }
+
+        .banner-display {
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            height: 700px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .banner-slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .banner-slide.active {
+            opacity: 1;
+        }
+
+        .banner-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* Navigation Arrows */
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            font-size: 40px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+            z-index: 10;
+        }
+
+        .nav-arrow:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-arrow.prev {
+            left: 30px;
+        }
+
+        .nav-arrow.next {
+            right: 30px;
+        }
+
+        /* Bottom Controls */
+        .controls-container {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .counter {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .dots-container {
+            display: flex;
+            gap: 12px;
+        }
+
+        .dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .dot.active {
+            background: white;
+            width: 40px;
+            border-radius: 7px;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+
+        .dot:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(1.2);
+        }
+
+        /* Play/Pause Button */
+        .play-pause-btn {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            font-size: 24px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .play-pause-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        /* Loading State */
+        .loading {
+            color: white;
+            font-size: 20px;
+            text-align: center;
+        }
+
+        /* No Images State */
+        .no-images {
+            color: white;
+            font-size: 24px;
+            text-align: center;
+            padding: 40px;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+
+            .header-title {
+                font-size: 18px;
+            }
+
+            .back-button {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+
+            .viewer-container {
+                padding: 20px;
+            }
+
+            .banner-display {
+                height: 500px;
+            }
+
+            .nav-arrow {
+                width: 50px;
+                height: 50px;
+                font-size: 30px;
+            }
+
+            .nav-arrow.prev {
+                left: 15px;
+            }
+
+            .nav-arrow.next {
+                right: 15px;
+            }
+
+            .play-pause-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+                top: 20px;
+                right: 20px;
+            }
+
+            .counter {
+                padding: 8px 20px;
+                font-size: 14px;
+            }
+
+            .dot {
+                width: 10px;
+                height: 10px;
+            }
+
+            .dot.active {
+                width: 30px;
+            }
+
+            .controls-container {
+                bottom: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .banner-display {
+                height: 400px;
+            }
+
+            .header-title {
+                font-size: 16px;
+            }
+
+            .back-button {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="header-title">Advertisement Viewer</div>
+        <a href="index.html" class="back-button">← Back to Market</a>
+    </div>
+
+    <!-- Main Viewer -->
+    <div class="viewer-container">
+        <div class="banner-display" id="bannerDisplay">
+            <div class="loading">Loading banners...</div>
+        </div>
+
+        <!-- Play/Pause Button -->
+        <div class="play-pause-btn" id="playPauseBtn" onclick="toggleAutoSlide()">
+            <span id="playPauseIcon">⏸</span>
+        </div>
+
+        <!-- Navigation Arrows -->
+        <div class="nav-arrow prev" onclick="prevSlide()">&#10094;</div>
+        <div class="nav-arrow next" onclick="nextSlide()">&#10095;</div>
+
+        <!-- Bottom Controls -->
+        <div class="controls-container">
+            <div class="counter">
+                <span id="counter">1 / 1</span>
+            </div>
+            <div class="dots-container" id="dotsContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        // Get URL parameters to determine which banner to show
+        const urlParams = new URLSearchParams(window.location.search);
+        const bannerType = urlParams.get('type') || 'left'; // 'left' or 'right'
+        const startIndex = parseInt(urlParams.get('index')) || 0;
+
+        // Configuration - Same as main page
+        const leftBannerImages = [
+            'left_banner/image1.png',
+            'left_banner/image2.png',
+            'left_banner/image3.png',
+            'left_banner/image4.png',
+            'left_banner/image5.png',
+            'left_banner/image6.png',
+            'left_banner/image7.png',
+            'left_banner/image8.png',
+            'left_banner/image9.png',
+            'left_banner/image10.png',
+            'left_banner/image11.png',
+            'left_banner/image12.png',
+            'left_banner/image13.png'
+        ];
+
+        const rightBannerImages = [
+            'right_banner/image1.png',
+            'right_banner/image2.png',
+            'right_banner/image3.png',
+            'right_banner/image4.png',
+            'right_banner/image5.png'
+        ];
+
+        let currentImages = [];
+        let currentIndex = 0;
+        let autoSlideInterval;
+        let isAutoSliding = true;
+
+        // Initialize
+        function init() {
+            const imageList = bannerType === 'left' ? leftBannerImages : rightBannerImages;
+            loadImages(imageList);
+        }
+
+        function loadImages(imageList) {
+            const promises = imageList.map(src => {
+                return new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.onload = () => resolve(src);
+                    img.onerror = () => reject(src);
+                    img.src = src;
+                });
+            });
+
+            Promise.allSettled(promises).then(results => {
+                currentImages = results
+                    .filter(result => result.status === 'fulfilled')
+                    .map(result => result.value);
+
+                if (currentImages.length > 0) {
+                    currentIndex = Math.min(startIndex, currentImages.length - 1);
+                    buildViewer();
+                    startAutoSlide();
+                } else {
+                    showNoImages();
+                }
+            });
+        }
+
+        function buildViewer() {
+            const display = document.getElementById('bannerDisplay');
+            const dotsContainer = document.getElementById('dotsContainer');
+            
+            display.innerHTML = '';
+            dotsContainer.innerHTML = '';
+
+            // Create slides
+            currentImages.forEach((src, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'banner-slide' + (index === currentIndex ? ' active' : '');
+                
+                const img = document.createElement('img');
+                img.src = src;
+                img.alt = 'Banner ' + (index + 1);
+                
+                slide.appendChild(img);
+                display.appendChild(slide);
+
+                // Create dot
+                const dot = document.createElement('div');
+                dot.className = 'dot' + (index === currentIndex ? ' active' : '');
+                dot.onclick = () => goToSlide(index);
+                dotsContainer.appendChild(dot);
+            });
+
+            updateCounter();
+        }
+
+        function showNoImages() {
+            const display = document.getElementById('bannerDisplay');
+            display.innerHTML = '<div class="no-images">No images found in ' + bannerType + '_banner folder</div>';
+        }
+
+        function updateSlide() {
+            const slides = document.querySelectorAll('.banner-slide');
+            const dots = document.querySelectorAll('.dot');
+
+            slides.forEach((slide, index) => {
+                slide.classList.toggle('active', index === currentIndex);
+            });
+
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentIndex);
+            });
+
+            updateCounter();
+        }
+
+        function updateCounter() {
+            const counter = document.getElementById('counter');
+            counter.textContent = `${currentIndex + 1} / ${currentImages.length}`;
+        }
+
+        function nextSlide() {
+            currentIndex = (currentIndex + 1) % currentImages.length;
+            updateSlide();
+            resetAutoSlide();
+        }
+
+        function prevSlide() {
+            currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
+            updateSlide();
+            resetAutoSlide();
+        }
+
+        function goToSlide(index) {
+            currentIndex = index;
+            updateSlide();
+            resetAutoSlide();
+        }
+
+        function startAutoSlide() {
+            if (currentImages.length <= 1) return;
+            autoSlideInterval = setInterval(nextSlide, 4000);
+        }
+
+        function stopAutoSlide() {
+            if (autoSlideInterval) {
+                clearInterval(autoSlideInterval);
+            }
+        }
+
+        function resetAutoSlide() {
+            if (isAutoSliding) {
+                stopAutoSlide();
+                startAutoSlide();
+            }
+        }
+
+        function toggleAutoSlide() {
+            isAutoSliding = !isAutoSliding;
+            const icon = document.getElementById('playPauseIcon');
+            
+            if (isAutoSliding) {
+                icon.textContent = '⏸';
+                startAutoSlide();
+            } else {
+                icon.textContent = '▶';
+                stopAutoSlide();
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowRight') {
+                nextSlide();
+            } else if (event.key === 'ArrowLeft') {
+                prevSlide();
+            } else if (event.key === ' ') {
+                event.preventDefault();
+                toggleAutoSlide();
+            }
+        });
+
+        // Initialize on load
+        init();
+    </script>
+
+</body>
+</html>
